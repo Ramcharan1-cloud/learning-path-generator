@@ -47,22 +47,32 @@ def register():
 
 # ---------------- LOGIN ----------------
 @app.route("/login", methods=["GET", "POST"])
-def login():
+def register():
     if request.method == "POST":
         u = request.form["username"]
         p = request.form["password"]
 
         conn = sqlite3.connect("database.db")
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE username=? AND password=?", (u, p))
+        c.execute("SELECT * FROM users")
+        print("Users in DB:", c.fetchall())
+
+        c.execute(
+            "SELECT * FROM users WHERE username=? AND password=?",
+            (u, p)
+        )
         user = c.fetchone()
         conn.close()
+
+        print("Login result:", user)
 
         if user:
             session["user"] = u
             return redirect("/")
 
-    return render_template("login.html")
+        return "Login failed"
+
+    return render_template("register.html")
 
 # ---------------- LOGOUT ----------------
 @app.route("/logout")
@@ -120,5 +130,9 @@ def api_generate():
     })
 
 
+import os
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("🚀 Flask server starting...")
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
