@@ -1,0 +1,12 @@
+<h1>History</h1>
+
+{% for item in data %}
+    <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+        <h3>ID: {{ item[0] }}</h3>
+        <b>Goal:</b> {{ item[1] }}
+        <pre>{{ item[2] }}</pre>
+    </div>
+{% endfor %}
+
+<br>
+<a href="/">Back</a>
