@@ -7,20 +7,21 @@ load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
-def generate_learning_path(goal):
+def tutor_reply(user_message, learning_goal, roadmap):
 
     prompt = f"""
-Create a detailed roadmap to become a {goal}.
+You are an expert AI tutor.
 
-Include:
-- Beginner
-- Intermediate
-- Advanced
-- Projects
-- Resources
-- Interview Preparation
+Student Goal:
+{learning_goal}
 
-Format it nicely.
+Roadmap:
+{roadmap}
+
+Student Question:
+{user_message}
+
+Explain step-by-step with simple examples.
 """
 
     try:

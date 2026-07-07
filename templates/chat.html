@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Tutor</title>
+
+    <style>
+        body{
+            font-family:Arial;
+            background:#f5f5f5;
+            margin:0;
+        }
+
+        .container{
+            width:800px;
+            margin:40px auto;
+            background:white;
+            padding:20px;
+            border-radius:10px;
+        }
+
+        #messages{
+            height:450px;
+            overflow-y:auto;
+            border:1px solid #ddd;
+            padding:15px;
+            margin-bottom:20px;
+        }
+
+        textarea{
+            width:100%;
+            height:80px;
+        }
+
+        button{
+            margin-top:10px;
+            padding:10px 25px;
+            background:#4f46e5;
+            color:white;
+            border:none;
+            border-radius:8px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>🤖 AI Tutor</h2>
+
+<div id="messages"></div>
+
+<textarea id="message"></textarea>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+
+<script>
+async function sendMessage() {
+
+    let msg = document.getElementById("message").value;
+
+    if(msg.trim() === "") return;
+
+    document.getElementById("messages").innerHTML +=
+        "<p><b>You:</b> " + msg + "</p>";
+
+    try {
+
+        let response = await fetch("/chat/api", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                message: msg
+            })
+        });
+
+        let data = await response.json();
+
+        document.getElementById("messages").innerHTML +=
+            "<p><b>AI:</b> " + data.reply + "</p>";
+
+    } catch(err) {
+
+        document.getElementById("messages").innerHTML +=
+            "<p style='color:red'><b>Error:</b> " + err + "</p>";
+
+    }
+
+    document.getElementById("message").value = "";
+}
+</script>

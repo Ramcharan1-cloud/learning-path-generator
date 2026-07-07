@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import sqlite3
 import os
 from ai import generate_learning_path
+from ai_chat import tutor_reply
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -173,7 +174,6 @@ def history():
 
 @app.route("/api/generate", methods=["POST"])
 def api_generate():
-
     data = request.get_json()
 
     goal = data.get("goal", "")
@@ -186,8 +186,35 @@ def api_generate():
     })
 
 
+# ---------------- CHAT ----------------
+
+@app.route("/chat")
+def chat_page():
+    if "user" not in session:
+        return redirect("/login")
+
+    return render_template("chat.html")
+
+
+@app.route("/chat/api", methods=["POST"])
+def chat_api():
+    data = request.get_json()
+
+    message = data["message"]
+
+    reply = tutor_reply(
+        message,
+        "Backend Developer",
+        ""
+    )
+
+    return jsonify({
+        "reply": reply
+    })
+
+
 # ---------------- RUN ----------------
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=True)
